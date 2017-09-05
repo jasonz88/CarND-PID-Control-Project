@@ -51,12 +51,12 @@ Also, brake is introduced in case of huge CTE difference or CTE value to prevent
  * PID for steering: 0.1, 0.001, 3.5;
     update when `0.12 < cteDiff || 1.5 < fabs(cte)`:
     
-    `
+    ```
     KpCoeff = KiCoeff = KdCoeff = cteDiff * fabs(cte)
     Kp += 1e-5 * Kp * KpCoeff * v;
     Ki += 1e-4 * Ki * KiCoeff * v;
     Kd += 1e-4 * Kd * KdCoeff * v;
-    `
+    ```
     Upper bound of the PID: 0.15, 0.002, 4.0
  * PID for throttle: 0.1, 0, 3.5
 
