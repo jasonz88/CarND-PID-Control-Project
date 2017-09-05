@@ -2,6 +2,63 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ---
+[image1]: ./PIDdemo70mph.gif
+
+![alt text][image1]
+
+## Goal
+This project aims to control the car's steering angle and the throttle with PID controller.
+The experiment runs in the CarND term 2 simulator. While lapping around the track, the simulator sends the car's current cross-track error (CTE) via websocket to the PID controller; PID controller does calculation with current CTE and update steering angle and throttle value. The goal is to drive the car smoothly in the road with constant throttle. A strech goal is to finish a lap as fast as possible.
+
+## What is PID controller?
+PID controller works reactively. The input is an error signal. In most case, it can be the difference between the measured and the desired value of a process variable of a system. The output is a set of of control signal, consisting of one or more variables. The PID controller uses its parameters to determine the control signal so that the control signal will lead the system to a smaller error. i.e: a process variable value closer to the desired one.
+
+In our case, the error signal is what the simulator produces as the CTE (cross-track error); which is the distance between a reference trajectory and the actual car position. the PID controller trys to minimize this error by changing the steering angle and possibly the throttle. i.e: the car's direction and speed.
+
+### P (Proportional)
+The P, proportional term, accounts for present values of the error. It computes an output proportional to the CTE. For example, if the error is large and positive, the control output will also be large and positive. The gain is given by `-Kp cte`.
+
+A pure P-controller is unstable. The output will always compensate on the error at later movement so that the car oscillates about the reference trajectory.
+
+### I (Integral)
+The I, integral term, accounts for all past values of the error. It sums up the cte over time. For example, if the current output is not sufficiently strong, the integral of the error will accumulate over time, and the controller will respond by applying a stronger action. The gain is given by `-Ki sum(cte)`.
+
+The I term can be used to accumate a larger error signal quickly when the car is driving at higher speed. It also helps reduce proportional gain so that the oscillation is mitigated.
+
+### D (Differential)
+The D, differential term, accounts for possible future trends of the error, based on its current rate of change. It computes the derivative of the cte. The gain is given by `-Kd d(cte)/dt`.
+
+The D term can help reduce oscillation by taking the trend of error into account. i.e: it avoids overshooting when the rate of change becomes small.
+
+## Tuning the PID parameters
+### Constant throttle
+In this case, only one PID controller is used to control the steering angle from CTE input. I tuned the PID parameters manually. I didn't choose Twiddle algorithm because it requires a manual process to restart the simulator. Also because the time it takes to finish a lap is not trivial. I tuned the parameters in order of P, D and I.
+
+* start with P = 0.2, with I and D = 0, adjust P until it can make turns
+* increase D until oscillation is mitigated
+* in case of failure due to slow reaction: increase I or P
+* in case of failure due to oscillation: reduce I or P
+
+### Need for speed
+Another PID controller is used to control the throttle based on absolute value of steering angle. The output is `max_throttle-steering_gain`; so the it will go full speed when going straight while reduce the speed in case of large absolute steering value. The process to tweak the parameters is the same as above. Ideally we should see speed change only when necessary.
+
+Also, brake is introduced in case of huge CTE difference or CTE value to prevent crash at high speed. The parameters of the steering angle PID controller is also increased slightly based on the current speed and CTE value and its derivative. The goal is to increase both P and I so that it is able to cope with sharp turns at high speed. D is also increased proportionally to mitigate oscillation. There is a upper limit of these parameters in case it goes out of control.
+
+### Paramters
+* Constant throttle
+ * P, I, D = 0.1, 0.001, 3.5
+* Speed drive
+ * PID for steering: 0.1, 0.001, 3.5;
+    update when `0.12 < cteDiff || 1.5 < fabs(cte)`:
+    `
+    
+    KpCoeff = KiCoeff = KdCoeff = cteDiff * fabs(cte)
+    Kp += 1e-5 * Kp * KpCoeff * v;
+    Ki += 1e-4 * Ki * KiCoeff * v;
+    Kd += 1e-4 * Kd * KdCoeff * v;
+    `
+    Upper bound of the PID: 0.15, 0.002, 4.0
+ * PID for throttle: 0.1, 0, 3.5
 
 ## Dependencies
 

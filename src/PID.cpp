@@ -22,9 +22,18 @@ void PID::Init(double Kp, double Ki, double Kd) {
 }
 
 void PID::Update(double KpCoeff, double KiCoeff, double KdCoeff, double v) {
-	Kp += KpCoeff * v;
-	Ki += KiCoeff * v;
-	Kd += KdCoeff * v;
+	Kp += 1e-5 * Kp * KpCoeff * v;
+	Ki += 1e-4 * Ki * KiCoeff * v;
+	Kd += 1e-4 * Kd * KdCoeff * v;
+	if (0.15 < Kp) {
+		Kp = 0.15;
+	}
+	if (0.002 < Ki) {
+		Ki = 0.002;
+	}
+	if (4.0 < Kd) {
+		Kd = 4.0;
+	}
 }
 
 double PID::UpdateError(double cte) {
