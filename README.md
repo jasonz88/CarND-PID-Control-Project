@@ -50,8 +50,8 @@ Also, brake is introduced in case of huge CTE difference or CTE value to prevent
 * Speed drive
  * PID for steering: 0.1, 0.001, 3.5;
     update when `0.12 < cteDiff || 1.5 < fabs(cte)`:
-    `
     
+    `
     KpCoeff = KiCoeff = KdCoeff = cteDiff * fabs(cte)
     Kp += 1e-5 * Kp * KpCoeff * v;
     Ki += 1e-4 * Ki * KiCoeff * v;
