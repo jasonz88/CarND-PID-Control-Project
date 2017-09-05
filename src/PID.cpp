@@ -49,6 +49,6 @@ double PID::TotalError() {
 	return -Kp*p_error - Ki*i_error - Kd*d_error;
 }
 
-double PID::OutputThrottle(double max_thro){
-  return max_thro - Kp*p_error - Ki*i_error - Kd*d_error;
+double PID::OutputThrottle(double max_thro) {
+	return max_thro - Kp*p_error - Ki*i_error - Kd*d_error;
 }

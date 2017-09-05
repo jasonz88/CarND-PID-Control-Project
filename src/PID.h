@@ -32,6 +32,7 @@ public:
   */
   void Init(double Kp, double Ki, double Kd);
 
+  // Steering PID control: update parameters when in high speed
   void Update(double KpCoeff, double KiCoeff, double KdCoeff, double v);
 
   /*
@@ -44,6 +45,7 @@ public:
   */
   double TotalError();
 
+  // output for throttle control
   double OutputThrottle(double max_thro);
 
 
