@@ -64,11 +64,11 @@ int main()
           * another PID controller to control the speed!
           */
           double cteDiff = pid.UpdateError(cte);
-		  if (0.12 < cteDiff || 1.5 < fabs(cte)) {
-			throttle = -max_throttle / 2;
-			pid.Update(cteDiff * fabs(cte), cteDiff * fabs(cte), cteDiff * fabs(cte), speed);
-		  }
-		  steer_value = pid.TotalError();
+          if (0.12 < cteDiff || 1.5 < fabs(cte)) {
+            throttle = -max_throttle / 2;
+            pid.Update(cteDiff * fabs(cte), cteDiff * fabs(cte), cteDiff * fabs(cte), speed);
+          }
+          steer_value = pid.TotalError();
           
           // DEBUG
           std::cout << std::setprecision(3);
